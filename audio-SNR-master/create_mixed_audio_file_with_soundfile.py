@@ -22,6 +22,7 @@ class EncodingType(Enum):
 
     # Available subtypes
     # See. https://pysoundfile.readthedocs.io/en/latest/#soundfile.available_subtypes
+    
     INT16 = (
         "int16",
         "Signed 16 bit PCM",

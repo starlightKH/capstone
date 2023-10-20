@@ -27,6 +27,11 @@ def cal_amp(wf):
     # The dtype depends on the value of pulse-code modulation. The int16 is set for 16-bit PCM.
     amptitude = (np.frombuffer(buffer, dtype="int16")).astype(np.float64)
     return amptitude
+# wf.readframes(n)는 최대 n개의 오디오 프레임을 읽어들여 bytes 객체로 반환합니다. 
+# wf.getnframes()는 오디오 프레임 수를 반환합니다. 
+# 즉, wf.readframes(wf.getnframes())함수로 wav 파일의 모든 진폭값을 취득할 수 있습니다.
+# 마지막으로 bytes 객체를 (np.frombuffer(buffer, dtype="int16")).astype(np.float64)함수를 사용해 np.float64에 캐스팅합니다.
+
 
 def cal_rms(amp):
     return np.sqrt(np.mean(np.square(amp), axis=-1))
