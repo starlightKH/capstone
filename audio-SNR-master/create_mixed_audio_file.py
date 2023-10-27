@@ -5,6 +5,8 @@ import math
 import numpy as np
 import random
 import wave
+import librosa, librosa.display 
+import matplotlib.pyplot as plt
 
 def get_args():
     parser = argparse.ArgumentParser()
@@ -43,6 +45,7 @@ def save_waveform(output_path, params, amp):
     output_file.close()
 
 if __name__ == '__main__':
+    FIG_SIZE = (15,10)
     args = get_args()
 
     clean_file = args.clean_file
@@ -78,3 +81,13 @@ if __name__ == '__main__':
         clean_amp = clean_amp * (reduction_rate)
 
     save_waveform(args.output_mixed_file, clean_wav.getparams(), mixed_amp)
+    file = args.output_mixed_file
+    plt.figure(figsize=FIG_SIZE)
+    sig, sr = librosa.load(file, sr=16000)
+
+    librosa.display.waveshow(sig,sr=sr,alpha=0.5)
+    plt.xlabel("Time (s)")
+    plt.ylabel("Amplitude")
+    plt.title("Waveform")
+
+#.\create_mixed_audio_file.py --clean_file C:\Users\USER\Desktop\capstone\capstone\audio-SNR-master\data\16_bit\source_clean\arctic_a0001.wav --noise_file C:\Users\USER\Desktop\capstone\capstone\audio-SNR-master\data\16_bit\source_noise\ch01.wav --output_mixed_file C:\Users\USER\Desktop\capstone\capstone\audio-SNR-master\data\16_bit\output_mixed\test.wav --snr 0
