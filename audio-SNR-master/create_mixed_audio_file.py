@@ -7,6 +7,10 @@ import random  #array, math, numpy,random는 연산을 위한 모듈
 import wave
 import librosa, librosa.display 
 import matplotlib.pyplot as plt   #librosa, librosa.display, matplotlib.pyplot는 시각화를 위한 모듈
+from pydub import AudioSegment
+import random
+import subprocess
+
 
 def get_args():
     parser = argparse.ArgumentParser()  #parser를 생성한다.
@@ -79,15 +83,53 @@ if __name__ == '__main__':
         mixed_amp = mixed_amp * (reduction_rate)
         clean_amp = clean_amp * (reduction_rate)
 
-    save_waveform(args.output_mixed_file, clean_wav.getparams(), mixed_amp)     #args.output_mixed_file에 mixed_amp를 저장한다.
-    file = args.output_mixed_file
-    plt.figure(figsize=FIG_SIZE)
-    sig, sr = librosa.load(file, sr=16000)  #sig, sr에 file을 저장한다.
+    save_waveform(args.output_mixed_file, clean_wav.getparams(), mixed_amp)
 
-    librosa.display.waveshow(sig,sr=sr,alpha=0.5)   #sig를 시각화한다.
-    plt.xlabel("Time (s)")
-    plt.ylabel("Amplitude")
-    plt.title("Waveform")
-    plt.show()
+    file = args.output_mixed_file
+    # plt.figure(figsize=FIG_SIZE)
+    # sig, sr = librosa.load(file, sr=16000)
+
+    # time = np.arange(0, float(sig.shape[0]), 1) / sr
+
+    # plt.plot(time, sig, label='Waveform', alpha=0.5)
+    # plt.xlabel('Time (s)')
+    # plt.ylabel('Amplitude')
+    # plt.title('Waveform')
+    # plt.legend()
+    # plt.show()
+
+
+def mix_audio(original_audio_path, output_audio_path, total_duration=10000, segment_duration=2000):
+    # 로드할 오디오 파일
+    original_audio = AudioSegment.from_wav(original_audio_path)
+
+    # 새로운 오디오 파일 생성
+    new_audio = AudioSegment.silent(duration=total_duration)
+
+    # 랜덤한 위치에 원본 오디오를 삽입
+    start_time = random.randint(0, total_duration - segment_duration)
+    new_audio = new_audio.overlay(original_audio, position=start_time)
+
+    # 파일 저장
+    new_audio.export(output_audio_path, format="wav")
+
+# 사용 예시
+# original_file_path = "C:\\Users\\rbgus\\Desktop\\capstone\\capstone\\test.wav"
+# output_file_path = "C:\\Users\\rbgus\\Desktop\\capstone\\capstone\\output.wav"
+# mix_audio(original_file_path, output_file_path)
+
     #실행 코드 (/capstone/audio-SNR-master에서 실행)
     # .\create_mixed_audio_file.py --clean_file C:\Users\USER\Desktop\capstone\capstone\audio-SNR-master\data\16_bit\source_clean\arctic_a0001.wav --noise_file C:\Users\USER\Desktop\capstone\capstone\audio-SNR-master\data\16_bit\source_noise\ch01.wav --output_mixed_file C:\Users\USER\Desktop\capstone\capstone\audio-SNR-master\data\16_bit\output_mixed\test.wav --snr 20
+
+    #.\create_mixed_audio_file.py --clean_file D:\capstone file\clean.wav --noise_file D:\capstone file\noise.wav --output_mixed_file D:\capstone file\test.wav --snr 20
+    #.\create_mixed_audio_file.py --clean_file C:\\Users\\rbgus\\Desktop\\capstone\\capstone\\clean.wav --noise_file C:\\Users\\rbgus\\Desktop\\capstone\\capstone\\noise.wav --output_mixed_file C:\\Users\\rbgus\\Desktop\\capstone\\capstone\\test.wav --snr 20
+    #git bash에서 사용
+    # python create_mixed_audio_file.py --clean_file C:\\Users\\rbgus\\Desktop\\capstone\\capstone\\clean.wav --noise_file C:\\Users\\rbgus\\Desktop\\capstone\\capstone\\noise.wav --output_mixed_file C:\\Users\\rbgus\\Desktop\\capstone\\capstone\\test.wav --snr 20
+    #"D:\\capstone file\\교통소음\\130.도시 소리 데이터\\01.데이터\\2.Validation\\원천데이터\\VS_1.교통소음.zip\\1.자동차\\1.차량경적\\noise006.wav"
+    #"D:\\capstone file\\교통소음\\130.도시 소리 데이터\\01.데이터\\2.Validation\\원천데이터\\VS_1.교통소음.zip\\1.자동차\\3.차량주행음\\bgs006.wav"
+    #"D:\\capstone file\\output"
+   # python create_mixed_audio_file.py --clean_file D:\\capstonefile\\noise\\noise006.wav --noise_file D:\\capstonefile\\bgs\\bgs004.wav --output_mixed_file D:\\capstone_file\\output\\test.wav --snr 20
+
+command = "python create_mixed_audio_file.py --clean_file D:\\capstonefile\\noise\\noise006.wav --noise_file D:\\capstonefile\\bgs\\bgs004.wav --output_mixed_file D:\\capstone_file\\output\\test.wav --snr 20"
+subprocess.run(command, shell=True)
+# create_mixed_audio_file.py --clean_file D:\\capstonefile\\noise\\noise006.wav --noise_file D:\\capstonefile\\bgs\\bgs004.wav --output_mixed_file D:\\capstone_file\\output\\test.wav --snr 20
